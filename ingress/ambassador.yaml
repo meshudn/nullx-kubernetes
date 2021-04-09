@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ambassador-diagnostic
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v1
+      kind: Mapping
+      name: ambassador-diagnostic_mapping
+      host: vsr-kub005.informatik.tu-chemnitz.de
+      timeout_ms: 30000
+      prefix: /ambassador
+      service: ambassador-diagnostic:8877
+spec:
+  selector:
+    service: ambassador
+  ports:
+  - protocol: TCP
+    port: 8877

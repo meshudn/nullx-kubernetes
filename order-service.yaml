@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-microservice
+  labels:
+    app: order-microservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: order-microservice
+  template:
+    metadata:
+      labels:
+        app: order-microservice
+    spec:
+      containers:
+      - name: order
+        image: meshudn/orderservice:latest
+        env:
+        - name: DATABASENAME
+          value: "order_db"
+        - name: HOSTNAME
+          value: "localhost"
+        - name: USERDB
+          value: "root"
+        - name: PASSWORDDB
+          value: "1234"
+        - name: PORT
+          value: '3009'
+        - name: URL
+          value: 'http://10.105.125.0:3306/'
+        ports:
+        - containerPort: 3009
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+spec:
+  selector:
+    app: order-microservice
+  type: LoadBalancer	
+  ports:
+    - protocol: TCP
+      port: 3011
+      targetPort: 3009
+      nodePort: 30011

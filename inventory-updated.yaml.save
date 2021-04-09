@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-microservice-2
+  labels:
+    app: inventory-microservice-2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: inventory-microservice-2
+  template:
+    metadata:
+      labels:
+        app: inventory-microservice-2
+    spec:
+      containers:
+      - name: inventory
+        image: docker-registry:5000/inventory:v2.5
+        env:
+        - name: DATABASENAME
+          value: "product_db"
+        - name: HOSTNAME
+          value: "localhost"
+        - name: USERDB
+          value: "root"
+        - name: PASSWORDDB
+          value: "1234"
+        - name: PORT
+          value: '3002'
+        - name: URL
+          value: 'http://10.105.125.0:3306/'
+        ports:
+        - containerPort: 3002
+      imagePullSecrets:
+      - name: reg-cred-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service3
+spec:
+  selector:
+    app: inventory-microservice-2
+  type: LoadBalancer	
+  ports:
+    - protocol: TCP
+      port: 3022
+      targetPort: 3021      nodePort: 30004

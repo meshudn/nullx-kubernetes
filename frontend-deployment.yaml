@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-service
+  labels:
+    app: frontend-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend-service
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+    spec:
+      containers:
+      - name: frontend
+        image: meshudn/frontend:latest
+        env:
+        - name: CARTSERVICE
+          value: "http://134.109.233.159:30032/"
+        - name: INVENTORYSERVICE
+          value: "http://134.109.233.159:30004/"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-microservice
+spec:
+  selector:
+    app: frontend-service
+  type: LoadBalancer	
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3000
+      nodePort: 30002

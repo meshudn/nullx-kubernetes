@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-microservice
+  labels:
+    app: inventory-microservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: inventory-microservice
+  template:
+    metadata:
+      labels:
+        app: inventory-microservice
+    spec:
+      containers:
+      - name: inventory
+        image: meshudn/inventoryservice:latest
+        env:
+        - name: DATABASENAME
+          value: "product_db"
+        - name: HOSTNAME
+          value: "localhost"
+        - name: USERDB
+          value: "root"
+        - name: PASSWORDDB
+          value: "1234"
+        - name: PORT
+          value: '3002'
+        - name: URL
+          value: 'http://10.105.125.0:3306/'
+        ports:
+        - containerPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service2
+spec:
+  selector:
+    app: inventory-microservice
+  type: LoadBalancer	
+  ports:
+    - protocol: TCP
+      port: 3004
+      targetPort: 3002
+      nodePort: 30004

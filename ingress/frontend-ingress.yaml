@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  annotations:
+    konghq.com/plugins: request-id
+    kubernetes.io/ingress.class: kong
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /homepage
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-microservice
+            port:
+              number: 3001
+

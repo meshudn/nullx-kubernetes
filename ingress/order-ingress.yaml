@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: product-ingress
+  annotations:
+    konghq.com/plugins: request-id
+    kubernetes.io/ingress.class: kong
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /products
+        pathType: Prefix
+        backend:
+          service:
+            name: inventory-service2
+            port:
+              number: 3004
+
